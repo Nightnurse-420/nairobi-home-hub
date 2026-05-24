@@ -7,6 +7,7 @@ import {
 import { getProperty, formatKES, PROPERTIES } from "@/lib/properties";
 import { useSaved } from "@/lib/saved";
 import { cn } from "@/lib/utils";
+import { ReviewsSection } from "@/components/ReviewsSection";
 
 export const Route = createFileRoute("/property/$id")({
   head: ({ params }) => {
@@ -157,6 +158,8 @@ function PropertyPage() {
           </div>
         </div>
       </section>
+
+      <ReviewsSection listingId={p.id} />
 
       <section className="mt-6 px-5">
         <button className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-card py-3 text-xs font-semibold text-muted-foreground">
