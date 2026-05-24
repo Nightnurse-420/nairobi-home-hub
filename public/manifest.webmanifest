@@ -1,0 +1,16 @@
+{
+  "name": "NyumbaSearch — Find Verified Homes Smarter",
+  "short_name": "NyumbaSearch",
+  "description": "AI-powered house hunting for Nairobi. Verified vacant homes, no agents.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#10B981",
+  "categories": ["lifestyle", "utilities", "travel"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

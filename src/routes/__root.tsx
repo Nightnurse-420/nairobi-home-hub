@@ -3,8 +3,12 @@ import {
   Outlet, Link, createRootRouteWithContext, useRouter,
   HeadContent, Scripts, useRouterState,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 import appCss from "../styles.css?url";
 import { BottomNav } from "@/components/BottomNav";
+import { AuthProvider } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -49,7 +53,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -69,15 +77,27 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  // Hide bottom nav on full-screen views (property detail uses its own back button but keep nav for browse)
-  const hideNav = pathname.startsWith("/property/");
+  const router = useRouter();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      router.invalidate();
+      queryClient.invalidateQueries();
+    });
+    return () => subscription.unsubscribe();
+  }, [router, queryClient]);
+
+  const hideNav = pathname.startsWith("/property/") || pathname.startsWith("/auth");
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="mx-auto min-h-screen max-w-md bg-background">
-        <Outlet />
-        {!hideNav && <div className="h-24" />}
-        {!hideNav && <BottomNav />}
-      </div>
+      <AuthProvider>
+        <div className="mx-auto min-h-screen max-w-md bg-background">
+          <Outlet />
+          {!hideNav && <div className="h-24" />}
+          {!hideNav && <BottomNav />}
+        </div>
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
