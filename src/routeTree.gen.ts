@@ -12,8 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as LandlordRouteImport } from './routes/landlord'
+import { Route as CommunityRouteImport } from './routes/community'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropertyIdRouteImport } from './routes/property.$id'
+import { Route as LandlordNewRouteImport } from './routes/landlord.new'
+import { Route as CommunityIdRouteImport } from './routes/community.$id'
 
 const SavedRoute = SavedRouteImport.update({
   id: '/saved',
@@ -30,6 +36,26 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LandlordRoute = LandlordRouteImport.update({
+  id: '/landlord',
+  path: '/landlord',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityRoute = CommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -40,39 +66,105 @@ const PropertyIdRoute = PropertyIdRouteImport.update({
   path: '/property/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LandlordNewRoute = LandlordNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => LandlordRoute,
+} as any)
+const CommunityIdRoute = CommunityIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CommunityRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
+  '/auth': typeof AuthRoute
+  '/community': typeof CommunityRouteWithChildren
+  '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/community/$id': typeof CommunityIdRoute
+  '/landlord/new': typeof LandlordNewRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
+  '/auth': typeof AuthRoute
+  '/community': typeof CommunityRouteWithChildren
+  '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/community/$id': typeof CommunityIdRoute
+  '/landlord/new': typeof LandlordNewRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
+  '/auth': typeof AuthRoute
+  '/community': typeof CommunityRouteWithChildren
+  '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/community/$id': typeof CommunityIdRoute
+  '/landlord/new': typeof LandlordNewRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/map' | '/profile' | '/saved' | '/property/$id'
+  fullPaths:
+    | '/'
+    | '/assistant'
+    | '/auth'
+    | '/community'
+    | '/landlord'
+    | '/map'
+    | '/profile'
+    | '/saved'
+    | '/community/$id'
+    | '/landlord/new'
+    | '/property/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/map' | '/profile' | '/saved' | '/property/$id'
-  id: '__root__' | '/' | '/map' | '/profile' | '/saved' | '/property/$id'
+  to:
+    | '/'
+    | '/assistant'
+    | '/auth'
+    | '/community'
+    | '/landlord'
+    | '/map'
+    | '/profile'
+    | '/saved'
+    | '/community/$id'
+    | '/landlord/new'
+    | '/property/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/assistant'
+    | '/auth'
+    | '/community'
+    | '/landlord'
+    | '/map'
+    | '/profile'
+    | '/saved'
+    | '/community/$id'
+    | '/landlord/new'
+    | '/property/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AssistantRoute: typeof AssistantRoute
+  AuthRoute: typeof AuthRoute
+  CommunityRoute: typeof CommunityRouteWithChildren
+  LandlordRoute: typeof LandlordRouteWithChildren
   MapRoute: typeof MapRoute
   ProfileRoute: typeof ProfileRoute
   SavedRoute: typeof SavedRoute
@@ -102,6 +194,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/landlord': {
+      id: '/landlord'
+      path: '/landlord'
+      fullPath: '/landlord'
+      preLoaderRoute: typeof LandlordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -116,11 +236,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/landlord/new': {
+      id: '/landlord/new'
+      path: '/new'
+      fullPath: '/landlord/new'
+      preLoaderRoute: typeof LandlordNewRouteImport
+      parentRoute: typeof LandlordRoute
+    }
+    '/community/$id': {
+      id: '/community/$id'
+      path: '/$id'
+      fullPath: '/community/$id'
+      preLoaderRoute: typeof CommunityIdRouteImport
+      parentRoute: typeof CommunityRoute
+    }
   }
 }
 
+interface CommunityRouteChildren {
+  CommunityIdRoute: typeof CommunityIdRoute
+}
+
+const CommunityRouteChildren: CommunityRouteChildren = {
+  CommunityIdRoute: CommunityIdRoute,
+}
+
+const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
+  CommunityRouteChildren,
+)
+
+interface LandlordRouteChildren {
+  LandlordNewRoute: typeof LandlordNewRoute
+}
+
+const LandlordRouteChildren: LandlordRouteChildren = {
+  LandlordNewRoute: LandlordNewRoute,
+}
+
+const LandlordRouteWithChildren = LandlordRoute._addFileChildren(
+  LandlordRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AssistantRoute: AssistantRoute,
+  AuthRoute: AuthRoute,
+  CommunityRoute: CommunityRouteWithChildren,
+  LandlordRoute: LandlordRouteWithChildren,
   MapRoute: MapRoute,
   ProfileRoute: ProfileRoute,
   SavedRoute: SavedRoute,
