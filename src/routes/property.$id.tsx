@@ -68,7 +68,7 @@ function PropertyPage() {
         {/* Thumbnails */}
         {p.images.length > 1 && (
           <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
-            {p.images.map((_, i) => (
+            {p.images.map((_: string, i: number) => (
               <button key={i} onClick={() => setActive(i)} className={cn("h-1.5 rounded-full transition-all", i === active ? "w-6 bg-white" : "w-1.5 bg-white/60")} />
             ))}
           </div>
@@ -129,7 +129,7 @@ function PropertyPage() {
       <section className="mt-6 px-5">
         <h2 className="font-display text-base font-bold">Amenities</h2>
         <div className="mt-3 flex flex-wrap gap-2">
-          {p.amenities.map((a) => (
+          {p.amenities.map((a: string) => (
             <span key={a} className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium">{a}</span>
           ))}
         </div>
