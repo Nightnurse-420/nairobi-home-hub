@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { MapPin, X, BedDouble, Bath, ChevronRight, KeyRound, ExternalLink } from "lucide-react";
-import { PROPERTIES, formatKES, type Property } from "@/lib/properties";
+import { formatKES, type Property } from "@/lib/properties";
+import { useAllProperties } from "@/lib/use-listings";
 import { getMapboxToken, setMapboxToken } from "@/lib/mapbox-token";
 import { Logo } from "@/components/Logo";
 
