@@ -94,7 +94,7 @@ function HomePage() {
           {/* Stats */}
           <div className="mt-4 grid grid-cols-3 gap-2 text-center">
             {[
-              { v: PROPERTIES.length + "+", l: "Listings" },
+              { v: properties.length + "+", l: "Listings" },
               { v: NEIGHBORHOODS.length, l: "Areas" },
               { v: "100%", l: "Verified" },
             ].map((s) => (
