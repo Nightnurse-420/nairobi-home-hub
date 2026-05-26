@@ -1,10 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import { MapPin, X, BedDouble, Bath, ChevronRight, KeyRound, ExternalLink } from "lucide-react";
+import { MapPin, X, BedDouble, Bath, ChevronRight } from "lucide-react";
 import { formatKES, type Property } from "@/lib/properties";
 import { useAllProperties } from "@/lib/use-listings";
-import { getMapboxToken, setMapboxToken } from "@/lib/mapbox-token";
 import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/map")({
@@ -17,105 +15,120 @@ export const Route = createFileRoute("/map")({
   component: MapPage,
 });
 
-function MapPage() {
-  const [token, setToken] = useState<string | null>(null);
-  const [tokenInput, setTokenInput] = useState("");
-  useEffect(() => {
-    setToken(getMapboxToken());
-    const sync = () => setToken(getMapboxToken());
-    window.addEventListener("ns:mapbox-token-changed", sync);
-    return () => window.removeEventListener("ns:mapbox-token-changed", sync);
-  }, []);
-
-  if (!token) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <header className="flex items-center justify-between px-5 pb-3 pt-6">
-          <Logo />
-        </header>
-        <div className="flex flex-1 items-center justify-center px-5">
-          <div className="w-full max-w-sm animate-fade-up rounded-3xl bg-card p-6 shadow-card">
-            <div className="gradient-primary mx-auto flex h-12 w-12 items-center justify-center rounded-2xl text-primary-foreground shadow-elegant">
-              <KeyRound className="h-5 w-5" />
-            </div>
-            <h1 className="mt-4 text-center font-display text-xl font-bold">Connect Mapbox</h1>
-            <p className="mt-2 text-center text-sm text-muted-foreground">
-              Paste your free Mapbox public token to enable the live map. Stored only on this device.
-            </p>
-            <input
-              value={tokenInput}
-              onChange={(e) => setTokenInput(e.target.value)}
-              placeholder="pk.eyJ1Ijoi…"
-              className="mt-5 w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm outline-none focus:border-primary"
-            />
-            <button
-              onClick={() => tokenInput.startsWith("pk.") && setMapboxToken(tokenInput)}
-              disabled={!tokenInput.startsWith("pk.")}
-              className="mt-3 w-full rounded-2xl gradient-primary py-3 text-sm font-semibold text-primary-foreground shadow-elegant disabled:opacity-50"
-            >
-              Save token
-            </button>
-            <a
-              href="https://account.mapbox.com/access-tokens/"
-              target="_blank" rel="noreferrer"
-              className="mt-3 flex items-center justify-center gap-1 text-xs font-medium text-primary"
-            >
-              Get a free token <ExternalLink className="h-3 w-3" />
-            </a>
-          </div>
-        </div>
-      </div>
-    );
+declare global {
+  interface Window {
+    google: any;
+    __nsInitMap?: () => void;
+    __nsMapReady?: boolean;
   }
-
-  return <MapView token={token} />;
 }
 
-function MapView({ token }: { token: string }) {
+const SCRIPT_ID = "ns-google-maps";
+
+function loadGoogleMaps(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === "undefined") return reject(new Error("no window"));
+    if (window.__nsMapReady && window.google?.maps) return resolve();
+
+    const existing = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+    const prevCb = window.__nsInitMap;
+    window.__nsInitMap = () => {
+      window.__nsMapReady = true;
+      prevCb?.();
+      resolve();
+    };
+    if (existing) return; // callback will fire
+
+    const key = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
+    const channel = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
+    if (!key) return reject(new Error("Missing Google Maps key"));
+
+    const s = document.createElement("script");
+    s.id = SCRIPT_ID;
+    s.async = true;
+    s.defer = true;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=__nsInitMap${channel ? `&channel=${channel}` : ""}`;
+    s.onerror = () => reject(new Error("Failed to load Google Maps"));
+    document.head.appendChild(s);
+  });
+}
+
+function MapPage() {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const mapRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<Property | null>(null);
   const { properties } = useAllProperties();
   const mapped = properties.filter((p) => p.lat && p.lng);
 
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
-    mapboxgl.accessToken = token;
-    const map = new mapboxgl.Map({
-      container: containerRef.current,
-      style: "mapbox://styles/mapbox/light-v11",
-      center: [36.8219, -1.2921],
-      zoom: 11.2,
-      attributionControl: false,
-    });
-    mapRef.current = map;
-    map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
-    return () => { map.remove(); mapRef.current = null; };
-  }, [token]);
+    loadGoogleMaps().then(() => setReady(true)).catch((e) => setError(e.message));
+  }, []);
 
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    const markers: mapboxgl.Marker[] = [];
-    mapped.forEach((p) => {
-      const el = document.createElement("div");
-      el.className = "mb-price-pin" + (p.premium ? " gold" : "");
-      el.textContent = "KES " + Math.round(p.rent / 1000) + "K";
-      el.addEventListener("click", (e) => {
-        e.stopPropagation();
-        setSelected(p);
-        map.flyTo({ center: [p.lng, p.lat], zoom: 14, duration: 800 });
-      });
-      markers.push(new mapboxgl.Marker({ element: el }).setLngLat([p.lng, p.lat]).addTo(map));
+    if (!ready || !containerRef.current || mapRef.current) return;
+    mapRef.current = new window.google.maps.Map(containerRef.current, {
+      center: { lat: -1.2921, lng: 36.8219 },
+      zoom: 12,
+      disableDefaultUI: true,
+      zoomControl: true,
+      gestureHandling: "greedy",
+      styles: [
+        { elementType: "geometry", stylers: [{ color: "#f5f7f6" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#5a6b66" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+        { featureType: "water", elementType: "geometry", stylers: [{ color: "#cfe9e0" }] },
+        { featureType: "landscape.natural", stylers: [{ color: "#eaf3ee" }] },
+      ],
     });
-    return () => { markers.forEach((m) => m.remove()); };
-  }, [mapped]);
+  }, [ready]);
+
+  useEffect(() => {
+    if (!ready || !mapRef.current) return;
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
+
+    mapped.forEach((p) => {
+      const label = "KES " + Math.round(p.rent / 1000) + "K";
+      const color = p.premium ? "#c9a84c" : "#10B981";
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="86" height="34"><rect x="0.5" y="0.5" rx="14" ry="14" width="85" height="29" fill="${color}" stroke="white" stroke-width="2"/><text x="43" y="20" font-family="Inter, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="white">${label}</text></svg>`;
+      const marker = new window.google.maps.Marker({
+        position: { lat: p.lat, lng: p.lng },
+        map: mapRef.current,
+        title: p.title,
+        icon: {
+          url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg),
+          scaledSize: new window.google.maps.Size(86, 34),
+          anchor: new window.google.maps.Point(43, 17),
+        },
+      });
+      marker.addListener("click", () => {
+        setSelected(p);
+        mapRef.current.panTo({ lat: p.lat, lng: p.lng });
+      });
+      markersRef.current.push(marker);
+    });
+  }, [ready, mapped]);
 
   return (
     <div className="fixed inset-0 mx-auto max-w-md">
-      <div ref={containerRef} className="absolute inset-0" />
+      <div ref={containerRef} className="absolute inset-0 bg-muted" />
 
-      {/* Top overlay */}
+      {!ready && !error && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="rounded-2xl glass px-4 py-3 text-xs font-medium shadow-card">Loading map…</div>
+        </div>
+      )}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center p-5">
+          <div className="rounded-2xl bg-card p-5 text-sm shadow-card">Couldn’t load map: {error}</div>
+        </div>
+      )}
+
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 p-4">
         <div className="pointer-events-auto flex items-center justify-between rounded-2xl glass px-3 py-2 shadow-card">
           <Logo />
@@ -125,8 +138,6 @@ function MapView({ token }: { token: string }) {
         </div>
       </div>
 
-
-      {/* Bottom sheet */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-4 safe-bottom">
         {selected ? (
           <div className="pointer-events-auto animate-fade-up rounded-3xl bg-card p-3 shadow-elegant">
