@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, Sparkles, MapPin, TrendingUp } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { PropertyCard } from "@/components/PropertyCard";
-import { PROPERTIES, NEIGHBORHOODS, type Property } from "@/lib/properties";
+import { NEIGHBORHOODS, type Property } from "@/lib/properties";
+import { useAllProperties } from "@/lib/use-listings";
 import { cn } from "@/lib/utils";
 import heroImg from "@/assets/nairobi-hero.jpg";
 
