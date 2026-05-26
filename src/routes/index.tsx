@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, Sparkles, MapPin, TrendingUp } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { PropertyCard } from "@/components/PropertyCard";
-import { PROPERTIES, NEIGHBORHOODS, type Property } from "@/lib/properties";
+import { NEIGHBORHOODS, type Property } from "@/lib/properties";
+import { useAllProperties } from "@/lib/use-listings";
 import { cn } from "@/lib/utils";
 import heroImg from "@/assets/nairobi-hero.jpg";
 
@@ -31,20 +32,21 @@ function HomePage() {
   const [type, setType] = useState<(typeof TYPES)[number]>("All");
   const [budget, setBudget] = useState(0);
   const [hood, setHood] = useState<string | null>(null);
+  const { properties } = useAllProperties();
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
     const b = BUDGETS[budget];
-    return PROPERTIES.filter((p) => {
+    return properties.filter((p: Property) => {
       if (type !== "All" && p.type !== type) return false;
       if (p.rent < b.min || p.rent > b.max) return false;
       if (hood && p.neighborhood !== hood) return false;
       if (ql && !(`${p.title} ${p.neighborhood} ${p.type}`.toLowerCase().includes(ql))) return false;
       return true;
     });
-  }, [q, type, budget, hood]);
+  }, [q, type, budget, hood, properties]);
 
-  const verifiedToday = PROPERTIES.filter((p) => p.verified === "today").slice(0, 6);
+  const verifiedToday = properties.filter((p: Property) => p.verified === "today").slice(0, 6);
 
   return (
     <div className="pb-4">
@@ -92,7 +94,7 @@ function HomePage() {
           {/* Stats */}
           <div className="mt-4 grid grid-cols-3 gap-2 text-center">
             {[
-              { v: PROPERTIES.length + "+", l: "Listings" },
+              { v: properties.length + "+", l: "Listings" },
               { v: NEIGHBORHOODS.length, l: "Areas" },
               { v: "100%", l: "Verified" },
             ].map((s) => (

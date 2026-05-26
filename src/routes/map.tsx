@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { MapPin, X, BedDouble, Bath, ChevronRight, KeyRound, ExternalLink } from "lucide-react";
-import { PROPERTIES, formatKES, type Property } from "@/lib/properties";
+import { formatKES, type Property } from "@/lib/properties";
+import { useAllProperties } from "@/lib/use-listings";
 import { getMapboxToken, setMapboxToken } from "@/lib/mapbox-token";
 import { Logo } from "@/components/Logo";
 
@@ -74,6 +75,8 @@ function MapView({ token }: { token: string }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [selected, setSelected] = useState<Property | null>(null);
+  const { properties } = useAllProperties();
+  const mapped = properties.filter((p) => p.lat && p.lng);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -87,8 +90,14 @@ function MapView({ token }: { token: string }) {
     });
     mapRef.current = map;
     map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
+    return () => { map.remove(); mapRef.current = null; };
+  }, [token]);
 
-    PROPERTIES.forEach((p) => {
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const markers: mapboxgl.Marker[] = [];
+    mapped.forEach((p) => {
       const el = document.createElement("div");
       el.className = "mb-price-pin" + (p.premium ? " gold" : "");
       el.textContent = "KES " + Math.round(p.rent / 1000) + "K";
@@ -97,11 +106,10 @@ function MapView({ token }: { token: string }) {
         setSelected(p);
         map.flyTo({ center: [p.lng, p.lat], zoom: 14, duration: 800 });
       });
-      new mapboxgl.Marker({ element: el }).setLngLat([p.lng, p.lat]).addTo(map);
+      markers.push(new mapboxgl.Marker({ element: el }).setLngLat([p.lng, p.lat]).addTo(map));
     });
-
-    return () => { map.remove(); mapRef.current = null; };
-  }, [token]);
+    return () => { markers.forEach((m) => m.remove()); };
+  }, [mapped]);
 
   return (
     <div className="fixed inset-0 mx-auto max-w-md">
@@ -112,10 +120,11 @@ function MapView({ token }: { token: string }) {
         <div className="pointer-events-auto flex items-center justify-between rounded-2xl glass px-3 py-2 shadow-card">
           <Logo />
           <div className="flex items-center gap-1.5 rounded-full bg-primary/15 px-2.5 py-1 text-[11px] font-semibold text-primary">
-            <MapPin className="h-3 w-3" /> {PROPERTIES.length} homes
+            <MapPin className="h-3 w-3" /> {mapped.length} homes
           </div>
         </div>
       </div>
+
 
       {/* Bottom sheet */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-4 safe-bottom">

@@ -4,7 +4,8 @@ import {
   ArrowLeft, Heart, Share2, MapPin, BedDouble, Bath, Maximize2, Phone,
   MessageCircle, ShieldCheck, Droplets, Wifi, Zap, CheckCircle2, Star, Flag,
 } from "lucide-react";
-import { getProperty, formatKES, PROPERTIES } from "@/lib/properties";
+import { getProperty, formatKES, PROPERTIES, type Property } from "@/lib/properties";
+import { fetchListingById } from "@/lib/use-listings";
 import { useSaved } from "@/lib/saved";
 import { cn } from "@/lib/utils";
 import { ReviewsSection } from "@/components/ReviewsSection";
@@ -20,10 +21,12 @@ export const Route = createFileRoute("/property/$id")({
       ],
     };
   },
-  loader: ({ params }) => {
-    const p = getProperty(params.id);
-    if (!p) throw notFound();
-    return p;
+  loader: async ({ params }): Promise<Property> => {
+    const seed = getProperty(params.id);
+    if (seed) return seed;
+    const db = await fetchListingById(params.id);
+    if (!db) throw notFound();
+    return db;
   },
   notFoundComponent: () => (
     <div className="flex min-h-screen items-center justify-center px-4 text-center">
