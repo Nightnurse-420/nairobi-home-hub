@@ -21,10 +21,12 @@ export const Route = createFileRoute("/property/$id")({
       ],
     };
   },
-  loader: ({ params }) => {
-    const p = getProperty(params.id);
-    if (!p) throw notFound();
-    return p;
+  loader: async ({ params }): Promise<Property> => {
+    const seed = getProperty(params.id);
+    if (seed) return seed;
+    const db = await fetchListingById(params.id);
+    if (!db) throw notFound();
+    return db;
   },
   notFoundComponent: () => (
     <div className="flex min-h-screen items-center justify-center px-4 text-center">
