@@ -32,20 +32,21 @@ function HomePage() {
   const [type, setType] = useState<(typeof TYPES)[number]>("All");
   const [budget, setBudget] = useState(0);
   const [hood, setHood] = useState<string | null>(null);
+  const { properties } = useAllProperties();
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
     const b = BUDGETS[budget];
-    return PROPERTIES.filter((p) => {
+    return properties.filter((p: Property) => {
       if (type !== "All" && p.type !== type) return false;
       if (p.rent < b.min || p.rent > b.max) return false;
       if (hood && p.neighborhood !== hood) return false;
       if (ql && !(`${p.title} ${p.neighborhood} ${p.type}`.toLowerCase().includes(ql))) return false;
       return true;
     });
-  }, [q, type, budget, hood]);
+  }, [q, type, budget, hood, properties]);
 
-  const verifiedToday = PROPERTIES.filter((p) => p.verified === "today").slice(0, 6);
+  const verifiedToday = properties.filter((p: Property) => p.verified === "today").slice(0, 6);
 
   return (
     <div className="pb-4">
