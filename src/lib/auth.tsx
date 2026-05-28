@@ -9,24 +9,38 @@ type Profile = {
   avatar_url: string | null;
 };
 
+export type AppRole = "tenant" | "landlord" | "apartment_owner" | "admin";
+
 type AuthCtx = {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
-  roles: string[];
+  roles: AppRole[];
   isLoading: boolean;
+  /** Highest-privilege "shell" role for nav/theme. Order: admin > landlord > apartment_owner > tenant */
+  primaryRole: AppRole;
+  isAdmin: boolean;
   isLandlord: boolean;
+  isOwner: boolean;
+  isTenant: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 };
 
 const Ctx = createContext<AuthCtx | null>(null);
 
+function pickPrimary(roles: AppRole[]): AppRole {
+  if (roles.includes("admin")) return "admin";
+  if (roles.includes("landlord")) return "landlord";
+  if (roles.includes("apartment_owner")) return "apartment_owner";
+  return "tenant";
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [roles, setRoles] = useState<string[]>([]);
+  const [roles, setRoles] = useState<AppRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadProfile = async (uid: string) => {
@@ -35,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       supabase.from("user_roles").select("role").eq("user_id", uid),
     ]);
     setProfile(prof as Profile | null);
-    setRoles((roleRows ?? []).map((r: { role: string }) => r.role));
+    setRoles((roleRows ?? []).map((r: { role: string }) => r.role as AppRole));
   };
 
   useEffect(() => {
@@ -58,13 +72,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  const primaryRole = pickPrimary(roles);
+
   const value: AuthCtx = {
     user,
     session,
     profile,
     roles,
     isLoading,
+    primaryRole,
+    isAdmin: roles.includes("admin"),
     isLandlord: roles.includes("landlord") || roles.includes("admin"),
+    isOwner: roles.includes("apartment_owner"),
+    isTenant: primaryRole === "tenant",
     signOut: async () => {
       await supabase.auth.signOut();
     },
