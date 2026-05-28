@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PROPERTIES, type Property, type PropertyType } from "@/lib/properties";
 import fallbackImg from "@/assets/apt-1.jpg";
@@ -52,11 +53,28 @@ async function fetchDbListings(): Promise<Property[]> {
 }
 
 export function useAllProperties() {
+  const qc = useQueryClient();
   const q = useQuery({
     queryKey: ["listings", "public"],
     queryFn: fetchDbListings,
-    staleTime: 60_000,
+    staleTime: 30_000,
+    refetchOnWindowFocus: true,
   });
+
+  useEffect(() => {
+    const invalidate = () => qc.invalidateQueries({ queryKey: ["listings", "public"] });
+    const channel = supabase
+      .channel("public:listings-feed")
+      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, invalidate)
+      .on("postgres_changes", { event: "*", schema: "public", table: "listing_images" }, invalidate)
+      .subscribe();
+    const interval = setInterval(invalidate, 30_000);
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
+  }, [qc]);
+
   const db = q.data ?? [];
   return { properties: [...db, ...PROPERTIES], dbCount: db.length, isLoading: q.isLoading };
 }
