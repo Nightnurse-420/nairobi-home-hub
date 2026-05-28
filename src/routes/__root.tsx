@@ -5,10 +5,11 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import appCss from "../styles.css?url";
-import { BottomNav } from "@/components/BottomNav";
+import { RoleNav, shellForPath } from "@/components/RoleNav";
 import { AuthProvider } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 
 function NotFoundComponent() {
   return (
@@ -87,14 +88,18 @@ function RootComponent() {
     return () => subscription.unsubscribe();
   }, [router, queryClient]);
 
-  const hideNav = pathname.startsWith("/property/") || pathname.startsWith("/auth");
+  const shell = shellForPath(pathname);
+  const themeClass =
+    shell === "landlord" || shell === "admin" ? "theme-landlord" :
+    shell === "owner" ? "theme-owner" : "";
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className="mx-auto min-h-screen max-w-md bg-background">
+        <div className={cn("mx-auto min-h-screen max-w-md bg-background", themeClass)}>
           <Outlet />
-          {!hideNav && <div className="h-24" />}
-          {!hideNav && <BottomNav />}
+          {shell && <div className="h-24" />}
+          {shell && <RoleNav shell={shell} />}
         </div>
         <Toaster />
       </AuthProvider>

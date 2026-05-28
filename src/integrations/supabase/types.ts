@@ -163,6 +163,7 @@ export type Database = {
           amenities: string[] | null
           baths: number
           beds: number
+          building_name: string | null
           created_at: string
           description: string | null
           id: string
@@ -176,6 +177,7 @@ export type Database = {
           rent: number
           sqm: number | null
           title: string
+          unit_number: string | null
           updated_at: string
           vacant: boolean
           verified: boolean
@@ -185,6 +187,7 @@ export type Database = {
           amenities?: string[] | null
           baths?: number
           beds?: number
+          building_name?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -198,6 +201,7 @@ export type Database = {
           rent: number
           sqm?: number | null
           title: string
+          unit_number?: string | null
           updated_at?: string
           vacant?: boolean
           verified?: boolean
@@ -207,6 +211,7 @@ export type Database = {
           amenities?: string[] | null
           baths?: number
           beds?: number
+          building_name?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -220,6 +225,7 @@ export type Database = {
           rent?: number
           sqm?: number | null
           title?: string
+          unit_number?: string | null
           updated_at?: string
           vacant?: boolean
           verified?: boolean
@@ -295,6 +301,42 @@ export type Database = {
           },
         ]
       }
+      role_requests: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          requested_role: Database["public"]["Enums"]["app_role"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          requested_role: Database["public"]["Enums"]["app_role"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          requested_role?: Database["public"]["Enums"]["app_role"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_listings: {
         Row: {
           created_at: string
@@ -359,7 +401,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "tenant" | "landlord" | "admin"
+      app_role: "tenant" | "landlord" | "admin" | "apartment_owner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -487,7 +529,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["tenant", "landlord", "admin"],
+      app_role: ["tenant", "landlord", "admin", "apartment_owner"],
     },
   },
 } as const
