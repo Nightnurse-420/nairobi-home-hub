@@ -96,6 +96,56 @@
   --ring: oklch(0.74 0.17 158);
 }
 
+/* Landlord shell — deep indigo / navy, building-portfolio feel */
+.theme-landlord {
+  --background: oklch(0.16 0.03 270);
+  --foreground: oklch(0.97 0.005 270);
+  --surface: oklch(0.21 0.04 270);
+  --card: oklch(0.22 0.04 270);
+  --card-foreground: oklch(0.97 0.005 270);
+  --popover: oklch(0.22 0.04 270);
+  --popover-foreground: oklch(0.97 0.005 270);
+  --primary: oklch(0.66 0.20 265);
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-glow: oklch(0.78 0.18 280);
+  --secondary: oklch(0.25 0.04 270);
+  --secondary-foreground: oklch(0.97 0.005 270);
+  --muted: oklch(0.24 0.03 270);
+  --muted-foreground: oklch(0.7 0.02 270);
+  --accent: oklch(0.28 0.05 270);
+  --accent-foreground: oklch(0.97 0.005 270);
+  --gold: oklch(0.82 0.14 80);
+  --gold-foreground: oklch(0.15 0.04 80);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.66 0.20 265);
+}
+
+/* Apartment-owner shell — warm sand & terracotta, single-unit pride */
+.theme-owner {
+  --background: oklch(0.98 0.012 60);
+  --foreground: oklch(0.22 0.04 40);
+  --surface: oklch(0.96 0.02 60);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.04 40);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.04 40);
+  --primary: oklch(0.62 0.16 40);
+  --primary-foreground: oklch(0.99 0 0);
+  --primary-glow: oklch(0.74 0.14 50);
+  --secondary: oklch(0.94 0.03 60);
+  --secondary-foreground: oklch(0.25 0.04 40);
+  --muted: oklch(0.94 0.02 60);
+  --muted-foreground: oklch(0.5 0.03 40);
+  --accent: oklch(0.92 0.04 60);
+  --accent-foreground: oklch(0.25 0.04 40);
+  --gold: oklch(0.82 0.14 80);
+  --gold-foreground: oklch(0.2 0.04 80);
+  --border: oklch(0.88 0.02 60);
+  --input: oklch(0.88 0.02 60);
+  --ring: oklch(0.62 0.16 40);
+}
+
 @layer base {
   * { border-color: var(--color-border); }
   html, body { background-color: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
