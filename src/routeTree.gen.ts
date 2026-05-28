@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LandlordRouteImport } from './routes/landlord'
 import { Route as CommunityRouteImport } from './routes/community'
@@ -18,8 +19,17 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropertyIdRouteImport } from './routes/property.$id'
+import { Route as OwnerNewRouteImport } from './routes/owner.new'
+import { Route as OwnerMessagesRouteImport } from './routes/owner.messages'
+import { Route as OwnerMaintenanceRouteImport } from './routes/owner.maintenance'
+import { Route as OwnerFinancesRouteImport } from './routes/owner.finances'
+import { Route as OnboardingRoleRouteImport } from './routes/onboarding.role'
 import { Route as LandlordNewRouteImport } from './routes/landlord.new'
+import { Route as LandlordListingsRouteImport } from './routes/landlord.listings'
+import { Route as LandlordInsightsRouteImport } from './routes/landlord.insights'
+import { Route as LandlordInquiriesRouteImport } from './routes/landlord.inquiries'
 import { Route as CommunityIdRouteImport } from './routes/community.$id'
+import { Route as AdminRoleRequestsRouteImport } from './routes/admin.role-requests'
 
 const SavedRoute = SavedRouteImport.update({
   id: '/saved',
@@ -29,6 +39,11 @@ const SavedRoute = SavedRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerRoute = OwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -66,15 +81,60 @@ const PropertyIdRoute = PropertyIdRouteImport.update({
   path: '/property/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OwnerNewRoute = OwnerNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerMessagesRoute = OwnerMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerMaintenanceRoute = OwnerMaintenanceRouteImport.update({
+  id: '/maintenance',
+  path: '/maintenance',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OwnerFinancesRoute = OwnerFinancesRouteImport.update({
+  id: '/finances',
+  path: '/finances',
+  getParentRoute: () => OwnerRoute,
+} as any)
+const OnboardingRoleRoute = OnboardingRoleRouteImport.update({
+  id: '/onboarding/role',
+  path: '/onboarding/role',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LandlordNewRoute = LandlordNewRouteImport.update({
   id: '/new',
   path: '/new',
+  getParentRoute: () => LandlordRoute,
+} as any)
+const LandlordListingsRoute = LandlordListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => LandlordRoute,
+} as any)
+const LandlordInsightsRoute = LandlordInsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => LandlordRoute,
+} as any)
+const LandlordInquiriesRoute = LandlordInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
   getParentRoute: () => LandlordRoute,
 } as any)
 const CommunityIdRoute = CommunityIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => CommunityRoute,
+} as any)
+const AdminRoleRequestsRoute = AdminRoleRequestsRouteImport.update({
+  id: '/admin/role-requests',
+  path: '/admin/role-requests',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -84,10 +144,20 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRouteWithChildren
   '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
+  '/owner': typeof OwnerRouteWithChildren
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/admin/role-requests': typeof AdminRoleRequestsRoute
   '/community/$id': typeof CommunityIdRoute
+  '/landlord/inquiries': typeof LandlordInquiriesRoute
+  '/landlord/insights': typeof LandlordInsightsRoute
+  '/landlord/listings': typeof LandlordListingsRoute
   '/landlord/new': typeof LandlordNewRoute
+  '/onboarding/role': typeof OnboardingRoleRoute
+  '/owner/finances': typeof OwnerFinancesRoute
+  '/owner/maintenance': typeof OwnerMaintenanceRoute
+  '/owner/messages': typeof OwnerMessagesRoute
+  '/owner/new': typeof OwnerNewRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesByTo {
@@ -97,10 +167,20 @@ export interface FileRoutesByTo {
   '/community': typeof CommunityRouteWithChildren
   '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
+  '/owner': typeof OwnerRouteWithChildren
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/admin/role-requests': typeof AdminRoleRequestsRoute
   '/community/$id': typeof CommunityIdRoute
+  '/landlord/inquiries': typeof LandlordInquiriesRoute
+  '/landlord/insights': typeof LandlordInsightsRoute
+  '/landlord/listings': typeof LandlordListingsRoute
   '/landlord/new': typeof LandlordNewRoute
+  '/onboarding/role': typeof OnboardingRoleRoute
+  '/owner/finances': typeof OwnerFinancesRoute
+  '/owner/maintenance': typeof OwnerMaintenanceRoute
+  '/owner/messages': typeof OwnerMessagesRoute
+  '/owner/new': typeof OwnerNewRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesById {
@@ -111,10 +191,20 @@ export interface FileRoutesById {
   '/community': typeof CommunityRouteWithChildren
   '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
+  '/owner': typeof OwnerRouteWithChildren
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
+  '/admin/role-requests': typeof AdminRoleRequestsRoute
   '/community/$id': typeof CommunityIdRoute
+  '/landlord/inquiries': typeof LandlordInquiriesRoute
+  '/landlord/insights': typeof LandlordInsightsRoute
+  '/landlord/listings': typeof LandlordListingsRoute
   '/landlord/new': typeof LandlordNewRoute
+  '/onboarding/role': typeof OnboardingRoleRoute
+  '/owner/finances': typeof OwnerFinancesRoute
+  '/owner/maintenance': typeof OwnerMaintenanceRoute
+  '/owner/messages': typeof OwnerMessagesRoute
+  '/owner/new': typeof OwnerNewRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRouteTypes {
@@ -126,10 +216,20 @@ export interface FileRouteTypes {
     | '/community'
     | '/landlord'
     | '/map'
+    | '/owner'
     | '/profile'
     | '/saved'
+    | '/admin/role-requests'
     | '/community/$id'
+    | '/landlord/inquiries'
+    | '/landlord/insights'
+    | '/landlord/listings'
     | '/landlord/new'
+    | '/onboarding/role'
+    | '/owner/finances'
+    | '/owner/maintenance'
+    | '/owner/messages'
+    | '/owner/new'
     | '/property/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -139,10 +239,20 @@ export interface FileRouteTypes {
     | '/community'
     | '/landlord'
     | '/map'
+    | '/owner'
     | '/profile'
     | '/saved'
+    | '/admin/role-requests'
     | '/community/$id'
+    | '/landlord/inquiries'
+    | '/landlord/insights'
+    | '/landlord/listings'
     | '/landlord/new'
+    | '/onboarding/role'
+    | '/owner/finances'
+    | '/owner/maintenance'
+    | '/owner/messages'
+    | '/owner/new'
     | '/property/$id'
   id:
     | '__root__'
@@ -152,10 +262,20 @@ export interface FileRouteTypes {
     | '/community'
     | '/landlord'
     | '/map'
+    | '/owner'
     | '/profile'
     | '/saved'
+    | '/admin/role-requests'
     | '/community/$id'
+    | '/landlord/inquiries'
+    | '/landlord/insights'
+    | '/landlord/listings'
     | '/landlord/new'
+    | '/onboarding/role'
+    | '/owner/finances'
+    | '/owner/maintenance'
+    | '/owner/messages'
+    | '/owner/new'
     | '/property/$id'
   fileRoutesById: FileRoutesById
 }
@@ -166,8 +286,11 @@ export interface RootRouteChildren {
   CommunityRoute: typeof CommunityRouteWithChildren
   LandlordRoute: typeof LandlordRouteWithChildren
   MapRoute: typeof MapRoute
+  OwnerRoute: typeof OwnerRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   SavedRoute: typeof SavedRoute
+  AdminRoleRequestsRoute: typeof AdminRoleRequestsRoute
+  OnboardingRoleRoute: typeof OnboardingRoleRoute
   PropertyIdRoute: typeof PropertyIdRoute
 }
 
@@ -185,6 +308,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/owner': {
+      id: '/owner'
+      path: '/owner'
+      fullPath: '/owner'
+      preLoaderRoute: typeof OwnerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -236,11 +366,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/owner/new': {
+      id: '/owner/new'
+      path: '/new'
+      fullPath: '/owner/new'
+      preLoaderRoute: typeof OwnerNewRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/messages': {
+      id: '/owner/messages'
+      path: '/messages'
+      fullPath: '/owner/messages'
+      preLoaderRoute: typeof OwnerMessagesRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/maintenance': {
+      id: '/owner/maintenance'
+      path: '/maintenance'
+      fullPath: '/owner/maintenance'
+      preLoaderRoute: typeof OwnerMaintenanceRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/owner/finances': {
+      id: '/owner/finances'
+      path: '/finances'
+      fullPath: '/owner/finances'
+      preLoaderRoute: typeof OwnerFinancesRouteImport
+      parentRoute: typeof OwnerRoute
+    }
+    '/onboarding/role': {
+      id: '/onboarding/role'
+      path: '/onboarding/role'
+      fullPath: '/onboarding/role'
+      preLoaderRoute: typeof OnboardingRoleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/landlord/new': {
       id: '/landlord/new'
       path: '/new'
       fullPath: '/landlord/new'
       preLoaderRoute: typeof LandlordNewRouteImport
+      parentRoute: typeof LandlordRoute
+    }
+    '/landlord/listings': {
+      id: '/landlord/listings'
+      path: '/listings'
+      fullPath: '/landlord/listings'
+      preLoaderRoute: typeof LandlordListingsRouteImport
+      parentRoute: typeof LandlordRoute
+    }
+    '/landlord/insights': {
+      id: '/landlord/insights'
+      path: '/insights'
+      fullPath: '/landlord/insights'
+      preLoaderRoute: typeof LandlordInsightsRouteImport
+      parentRoute: typeof LandlordRoute
+    }
+    '/landlord/inquiries': {
+      id: '/landlord/inquiries'
+      path: '/inquiries'
+      fullPath: '/landlord/inquiries'
+      preLoaderRoute: typeof LandlordInquiriesRouteImport
       parentRoute: typeof LandlordRoute
     }
     '/community/$id': {
@@ -249,6 +435,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/community/$id'
       preLoaderRoute: typeof CommunityIdRouteImport
       parentRoute: typeof CommunityRoute
+    }
+    '/admin/role-requests': {
+      id: '/admin/role-requests'
+      path: '/admin/role-requests'
+      fullPath: '/admin/role-requests'
+      preLoaderRoute: typeof AdminRoleRequestsRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -266,16 +459,38 @@ const CommunityRouteWithChildren = CommunityRoute._addFileChildren(
 )
 
 interface LandlordRouteChildren {
+  LandlordInquiriesRoute: typeof LandlordInquiriesRoute
+  LandlordInsightsRoute: typeof LandlordInsightsRoute
+  LandlordListingsRoute: typeof LandlordListingsRoute
   LandlordNewRoute: typeof LandlordNewRoute
 }
 
 const LandlordRouteChildren: LandlordRouteChildren = {
+  LandlordInquiriesRoute: LandlordInquiriesRoute,
+  LandlordInsightsRoute: LandlordInsightsRoute,
+  LandlordListingsRoute: LandlordListingsRoute,
   LandlordNewRoute: LandlordNewRoute,
 }
 
 const LandlordRouteWithChildren = LandlordRoute._addFileChildren(
   LandlordRouteChildren,
 )
+
+interface OwnerRouteChildren {
+  OwnerFinancesRoute: typeof OwnerFinancesRoute
+  OwnerMaintenanceRoute: typeof OwnerMaintenanceRoute
+  OwnerMessagesRoute: typeof OwnerMessagesRoute
+  OwnerNewRoute: typeof OwnerNewRoute
+}
+
+const OwnerRouteChildren: OwnerRouteChildren = {
+  OwnerFinancesRoute: OwnerFinancesRoute,
+  OwnerMaintenanceRoute: OwnerMaintenanceRoute,
+  OwnerMessagesRoute: OwnerMessagesRoute,
+  OwnerNewRoute: OwnerNewRoute,
+}
+
+const OwnerRouteWithChildren = OwnerRoute._addFileChildren(OwnerRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -284,10 +499,23 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityRoute: CommunityRouteWithChildren,
   LandlordRoute: LandlordRouteWithChildren,
   MapRoute: MapRoute,
+  OwnerRoute: OwnerRouteWithChildren,
   ProfileRoute: ProfileRoute,
   SavedRoute: SavedRoute,
+  AdminRoleRequestsRoute: AdminRoleRequestsRoute,
+  OnboardingRoleRoute: OnboardingRoleRoute,
   PropertyIdRoute: PropertyIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
