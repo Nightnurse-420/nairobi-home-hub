@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     profile,
     roles,
-    isLoading,
+    isLoading: isLoading || (!!user && !rolesLoaded),
     primaryRole,
     isAdmin: roles.includes("admin"),
     isLandlord: roles.includes("landlord") || roles.includes("admin"),
