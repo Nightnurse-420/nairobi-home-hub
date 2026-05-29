@@ -20,12 +20,18 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, primaryRole, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) navigate({ to: "/profile" });
-  }, [user, navigate]);
+    if (isLoading || !user) return;
+    const dest =
+      primaryRole === "admin" ? "/admin/role-requests" :
+      primaryRole === "landlord" ? "/landlord" :
+      primaryRole === "apartment_owner" ? "/owner" :
+      "/";
+    navigate({ to: dest });
+  }, [user, primaryRole, isLoading, navigate]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
