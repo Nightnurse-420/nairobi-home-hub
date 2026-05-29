@@ -42,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [rolesLoaded, setRolesLoaded] = useState(false);
 
   const loadProfile = async (uid: string) => {
     const [{ data: prof }, { data: roleRows }] = await Promise.all([
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ]);
     setProfile(prof as Profile | null);
     setRoles((roleRows ?? []).map((r: { role: string }) => r.role as AppRole));
+    setRolesLoaded(true);
   };
 
   useEffect(() => {
@@ -57,16 +59,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
+        setRolesLoaded(false);
         setTimeout(() => loadProfile(s.user.id), 0);
       } else {
         setProfile(null);
         setRoles([]);
+        setRolesLoaded(true);
       }
     });
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
-      if (data.session?.user) loadProfile(data.session.user.id);
+      if (data.session?.user) {
+        await loadProfile(data.session.user.id);
+      } else {
+        setRolesLoaded(true);
+      }
       setIsLoading(false);
     });
     return () => sub.subscription.unsubscribe();
@@ -79,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     profile,
     roles,
-    isLoading,
+    isLoading: isLoading || (!!user && !rolesLoaded),
     primaryRole,
     isAdmin: roles.includes("admin"),
     isLandlord: roles.includes("landlord") || roles.includes("admin"),
