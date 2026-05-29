@@ -51,7 +51,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back!");
-        navigate({ to: "/profile" });
+        // Redirect handled by useEffect once roles load.
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Authentication failed";
