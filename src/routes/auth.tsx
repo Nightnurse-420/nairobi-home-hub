@@ -73,7 +73,7 @@ function AuthPage() {
         return;
       }
       if (result.redirected) return;
-      navigate({ to: "/profile" });
+      // Redirect handled by useEffect once roles load.
     } catch {
       toast.error("Google sign-in failed");
       setGoogleLoading(false);
