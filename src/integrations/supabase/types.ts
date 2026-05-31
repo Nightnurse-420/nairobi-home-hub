@@ -303,9 +303,12 @@ export type Database = {
       }
       role_requests: {
         Row: {
+          business_name: string | null
           created_at: string
           id: string
+          national_id: string | null
           note: string | null
+          phone: string | null
           requested_role: Database["public"]["Enums"]["app_role"]
           reviewed_at: string | null
           reviewed_by: string | null
@@ -314,9 +317,12 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          business_name?: string | null
           created_at?: string
           id?: string
+          national_id?: string | null
           note?: string | null
+          phone?: string | null
           requested_role: Database["public"]["Enums"]["app_role"]
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -325,9 +331,12 @@ export type Database = {
           user_id: string
         }
         Update: {
+          business_name?: string | null
           created_at?: string
           id?: string
+          national_id?: string | null
           note?: string | null
+          phone?: string | null
           requested_role?: Database["public"]["Enums"]["app_role"]
           reviewed_at?: string | null
           reviewed_by?: string | null
