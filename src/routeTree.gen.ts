@@ -14,6 +14,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LandlordRouteImport } from './routes/landlord'
+import { Route as HostRouteImport } from './routes/host'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AssistantRouteImport } from './routes/assistant'
@@ -54,6 +55,11 @@ const MapRoute = MapRouteImport.update({
 const LandlordRoute = LandlordRouteImport.update({
   id: '/landlord',
   path: '/landlord',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HostRoute = HostRouteImport.update({
+  id: '/host',
+  path: '/host',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityRoute = CommunityRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRouteWithChildren
+  '/host': typeof HostRoute
   '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
   '/owner': typeof OwnerRouteWithChildren
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRouteWithChildren
+  '/host': typeof HostRoute
   '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
   '/owner': typeof OwnerRouteWithChildren
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/community': typeof CommunityRouteWithChildren
+  '/host': typeof HostRoute
   '/landlord': typeof LandlordRouteWithChildren
   '/map': typeof MapRoute
   '/owner': typeof OwnerRouteWithChildren
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/auth'
     | '/community'
+    | '/host'
     | '/landlord'
     | '/map'
     | '/owner'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/auth'
     | '/community'
+    | '/host'
     | '/landlord'
     | '/map'
     | '/owner'
@@ -260,6 +271,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/auth'
     | '/community'
+    | '/host'
     | '/landlord'
     | '/map'
     | '/owner'
@@ -284,6 +296,7 @@ export interface RootRouteChildren {
   AssistantRoute: typeof AssistantRoute
   AuthRoute: typeof AuthRoute
   CommunityRoute: typeof CommunityRouteWithChildren
+  HostRoute: typeof HostRoute
   LandlordRoute: typeof LandlordRouteWithChildren
   MapRoute: typeof MapRoute
   OwnerRoute: typeof OwnerRouteWithChildren
@@ -329,6 +342,13 @@ declare module '@tanstack/react-router' {
       path: '/landlord'
       fullPath: '/landlord'
       preLoaderRoute: typeof LandlordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/host': {
+      id: '/host'
+      path: '/host'
+      fullPath: '/host'
+      preLoaderRoute: typeof HostRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community': {
@@ -497,6 +517,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssistantRoute: AssistantRoute,
   AuthRoute: AuthRoute,
   CommunityRoute: CommunityRouteWithChildren,
+  HostRoute: HostRoute,
   LandlordRoute: LandlordRouteWithChildren,
   MapRoute: MapRoute,
   OwnerRoute: OwnerRouteWithChildren,
@@ -509,3 +530,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
