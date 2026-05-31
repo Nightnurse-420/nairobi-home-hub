@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal, Sparkles, MapPin, TrendingUp } from "lucide-react";
+import { Search, SlidersHorizontal, Sparkles, MapPin, TrendingUp, Building2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { PropertyCard } from "@/components/PropertyCard";
 import { NEIGHBORHOODS, type Property } from "@/lib/properties";
@@ -103,6 +103,12 @@ function HomePage() {
                 <div className="text-[10px] uppercase tracking-wide text-white/70">{s.l}</div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-4 flex items-center justify-center">
+            <Link to="/host" className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 backdrop-blur transition hover:bg-white/20">
+              <Building2 className="h-3 w-3" /> Are you a landlord or property owner?
+            </Link>
           </div>
         </div>
       </header>

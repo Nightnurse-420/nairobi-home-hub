@@ -9,11 +9,14 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>) => ({ intent: s.intent === "host" ? ("host" as const) : undefined }),
   head: () => ({ meta: [{ title: "Sign in · NyumbaSearch" }, { name: "description", content: "Sign in to NyumbaSearch to save homes and message landlords." }] }),
   component: AuthPage,
 });
 
 function AuthPage() {
+  const { intent } = Route.useSearch();
+  const isHost = intent === "host";
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,13 +28,17 @@ function AuthPage() {
 
   useEffect(() => {
     if (isLoading || !user) return;
+    if (isHost && primaryRole === "tenant") {
+      navigate({ to: "/onboarding/role" });
+      return;
+    }
     const dest =
       primaryRole === "admin" ? "/admin/role-requests" :
       primaryRole === "landlord" ? "/landlord" :
       primaryRole === "apartment_owner" ? "/owner" :
       "/";
     navigate({ to: dest });
-  }, [user, primaryRole, isLoading, navigate]);
+  }, [user, primaryRole, isLoading, navigate, isHost]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,11 +95,20 @@ function AuthPage() {
 
       <div className="mt-8 text-center">
         <Logo className="justify-center" />
-        <h1 className="mt-6 font-display text-2xl font-extrabold">
-          {mode === "signin" ? "Welcome back" : "Create your account"}
+        {isHost && (
+          <p className="mx-auto mt-4 inline-block rounded-full bg-indigo-600/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-indigo-700">
+            Host registration
+          </p>
+        )}
+        <h1 className="mt-4 font-display text-2xl font-extrabold">
+          {mode === "signin"
+            ? (isHost ? "Landlord sign in" : "Welcome back")
+            : (isHost ? "Register your property business" : "Create your account")}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {mode === "signin" ? "Sign in to continue your home search" : "Save homes, list properties, and chat with landlords"}
+          {isHost
+            ? "Hosts complete a quick verification before listings go live."
+            : (mode === "signin" ? "Sign in to continue your home search" : "Save homes, list properties, and chat with landlords")}
         </p>
       </div>
 
@@ -135,6 +151,14 @@ function AuthPage() {
         <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="font-semibold text-primary">
           {mode === "signin" ? "Create one" : "Sign in"}
         </button>
+      </p>
+
+      <p className="mt-3 text-center text-xs text-muted-foreground">
+        {isHost ? (
+          <>Looking for a home? <Link to="/auth" className="font-semibold text-primary">Tenant sign in</Link></>
+        ) : (
+          <>Are you a landlord or property owner? <Link to="/auth" search={{ intent: "host" }} className="font-semibold text-primary">Register as a host</Link></>
+        )}
       </p>
     </div>
   );
