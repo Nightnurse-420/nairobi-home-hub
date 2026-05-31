@@ -28,13 +28,17 @@ function AuthPage() {
 
   useEffect(() => {
     if (isLoading || !user) return;
+    if (isHost && primaryRole === "tenant") {
+      navigate({ to: "/onboarding/role" });
+      return;
+    }
     const dest =
       primaryRole === "admin" ? "/admin/role-requests" :
       primaryRole === "landlord" ? "/landlord" :
       primaryRole === "apartment_owner" ? "/owner" :
       "/";
     navigate({ to: dest });
-  }, [user, primaryRole, isLoading, navigate]);
+  }, [user, primaryRole, isLoading, navigate, isHost]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
