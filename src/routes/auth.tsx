@@ -9,11 +9,14 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>) => ({ intent: s.intent === "host" ? ("host" as const) : undefined }),
   head: () => ({ meta: [{ title: "Sign in · NyumbaSearch" }, { name: "description", content: "Sign in to NyumbaSearch to save homes and message landlords." }] }),
   component: AuthPage,
 });
 
 function AuthPage() {
+  const { intent } = Route.useSearch();
+  const isHost = intent === "host";
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
