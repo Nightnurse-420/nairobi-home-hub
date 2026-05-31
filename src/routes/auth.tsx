@@ -152,6 +152,14 @@ function AuthPage() {
           {mode === "signin" ? "Create one" : "Sign in"}
         </button>
       </p>
+
+      <p className="mt-3 text-center text-xs text-muted-foreground">
+        {isHost ? (
+          <>Looking for a home? <Link to="/auth" className="font-semibold text-primary">Tenant sign in</Link></>
+        ) : (
+          <>Are you a landlord or property owner? <Link to="/auth" search={{ intent: "host" }} className="font-semibold text-primary">Register as a host</Link></>
+        )}
+      </p>
     </div>
   );
 }
