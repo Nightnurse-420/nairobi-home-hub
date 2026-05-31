@@ -104,6 +104,12 @@ function HomePage() {
               </div>
             ))}
           </div>
+
+          <div className="mt-4 flex items-center justify-center">
+            <Link to="/host" className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 backdrop-blur transition hover:bg-white/20">
+              <Building2 className="h-3 w-3" /> Are you a landlord or property owner?
+            </Link>
+          </div>
         </div>
       </header>
 
