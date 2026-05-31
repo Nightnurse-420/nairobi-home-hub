@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal, Sparkles, MapPin, TrendingUp } from "lucide-react";
+import { Search, SlidersHorizontal, Sparkles, MapPin, TrendingUp, Building2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { PropertyCard } from "@/components/PropertyCard";
 import { NEIGHBORHOODS, type Property } from "@/lib/properties";
