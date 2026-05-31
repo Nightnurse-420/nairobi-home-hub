@@ -95,11 +95,20 @@ function AuthPage() {
 
       <div className="mt-8 text-center">
         <Logo className="justify-center" />
-        <h1 className="mt-6 font-display text-2xl font-extrabold">
-          {mode === "signin" ? "Welcome back" : "Create your account"}
+        {isHost && (
+          <p className="mx-auto mt-4 inline-block rounded-full bg-indigo-600/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-indigo-700">
+            Host registration
+          </p>
+        )}
+        <h1 className="mt-4 font-display text-2xl font-extrabold">
+          {mode === "signin"
+            ? (isHost ? "Landlord sign in" : "Welcome back")
+            : (isHost ? "Register your property business" : "Create your account")}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {mode === "signin" ? "Sign in to continue your home search" : "Save homes, list properties, and chat with landlords"}
+          {isHost
+            ? "Hosts complete a quick verification before listings go live."
+            : (mode === "signin" ? "Sign in to continue your home search" : "Save homes, list properties, and chat with landlords")}
         </p>
       </div>
 
